@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shreks Paradise</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .character-container img, .game-option img, .rps-container img {
+            width: 150px;
+            cursor: pointer;
+            margin: 20px;
+            border: 2px solid #ecf0f1;
+            transition: transform 0.2s;
+        }
+
+        .character-container img:hover, .game-option img:hover, .rps-container img:hover {
+            transform: scale(1.1);
+        }
+
+        .game-container {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .game-board {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .player-opponent-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .character-display {
+            width: 150px;
+            height: 150px;
+            position: relative;
+        }
+
+        .character-display img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            width: 200px;
+            background: #34495e;
+            color: #ecf0f1;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            display: none;
+            z-index: 10;
+            max-width: 200px;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -10px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent transparent #34495e transparent;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+            margin: 0 20px;
+        }
+
+        .board div {
+            width: 100px;
+            height: 100px;
+            background-color: #34495e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: #ecf0f1;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .winner {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+
+        .rps-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .rps-container img {
+            width: 100px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .rps-container img:hover {
+            transform: scale(1.1);
+        }
+
+        button {
+            background-color: #34495e;
+            color: #ecf0f1;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #1abc9c;
+        }
+    </style>
+</head>
+<body>
+    <div id="character-selection" class="container">
+        <h1>Shreks Paradise: Wähle deinen Charakter</h1>
+        <div class="character-container">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCKoYLGInLs7tZ5NgSYjfXW01VgDN6h7vpmw&s" alt="Shrek" onclick="selectCharacter('shrek')">
+            <img src="https://preview.redd.it/egg-sheeran-v0-uyrcl7jsjm7b1.jpg?auto=webp&s=b5599545a4883199c65249bcc02e76cecf18f9d0" alt="Egg Sheeran" onclick="selectCharacter('egg')">
+            <img src="https://tr.rbxcdn.com/fa235a3695324eb0ddb7e9e27cb69830/420/420/Hat/Webp" alt="Uwe" onclick="selectCharacter('uwe')">
+        </div>
+    </div>
+
+    <div id="game-selection" class="container" style="display: none;">
+        <h1>Wähle ein Spiel</h1>
+        <div class="game-option">
+            <img src="https://image.shutterstock.com/image-vector/tic-tac-toe-logo-icon-260nw-1866339347.jpg" alt="Tic Tac Toe" onclick="selectGame('ticTacToe')">
+            <img src="https://image.shutterstock.com/image-vector/checkers-game-icon-design-vector-260nw-1308044461.jpg" alt="Schere, Stein, Papier" onclick="selectGame('rps')">
+        </div>
+    </div>
+
+    <div id="tic-tac-toe" class="game-container">
+        <h1>Tic Tac Toe</h1>
+        <div class="game-board">
+            <div class="player-opponent-container">
+                <div class="character-display" id="player-character">
+                    <div class="speech-bubble" id="player-speech-bubble"></div>
+                </div>
+                <div class="board">
+                    <div data-index="0"></div>
+                    <div data-index="1"></div>
+                    <div data-index="2"></div>
+                    <div data-index="3"></div>
+                    <div data-index="4"></div>
+                    <div data-index="5"></div>
+                    <div data-index="6"></div>
+                    <div data-index="7"></div>
+                    <div data-index="8"></div>
+                </div>
+                <div class="character-display" id="opponent-character">
+                    <div class="speech-bubble" id="opponent-speech-bubble"></div>
+                </div>
+            </div>
+        </div>
+        <div class="winner" id="winner"></div>
+        <button onclick="resetGame()">Neustart</button>
+        <button onclick="goToGameSelection()">Zurück zur Auswahl</button>
+    </div>
+
+    <div id="rps" class="game-container">
+        <h1>Schere, Stein, Papier</h1>
+        <div class="game-board">
+            <div class="player-opponent-container">
+                <div class="character-display" id="rps-player-character">
+                    <div class="speech-bubble" id="rps-player-speech-bubble"></div>
+                </div>
+                <div class="rps-container">
+                    <img src="https://image.shutterstock.com/image-vector/rock-icon-vector-260nw-1680452889.jpg" alt="Stein" onclick="playerChoice('rock')">
+                    <img src="https://image.shutterstock.com/image-vector/paper-icon-vector-260nw-1680452891.jpg" alt="Papier" onclick="playerChoice('paper')">
+                    <img src="https://image.shutterstock.com/image-vector/scissors-icon-vector-260nw-1680452887.jpg" alt="Schere" onclick="playerChoice('scissors')">
+                </div>
+                <div class="character-display" id="rps-opponent-character">
+                    <div class="speech-bubble" id="rps-opponent-speech-bubble"></div>
+                </div>
+            </div>
+        </div>
+        <div class="winner" id="rps-winner"></div>
+        <button onclick="resetRPSGame()">Neustart</button>
+        <button onclick="goToGameSelection()">Zurück zur Auswahl</button>
+    </div>
+
+    <script>
+        let character = '';
+        let opponentCharacter = '';
+        let board = Array(9).fill(null);
+        let currentPlayer = 'X';
+        let playerSpeechBubble = document.getElementById('player-speech-bubble');
+        let opponentSpeechBubble = document.getElementById('opponent-speech-bubble');
+        const clickSound = new Audio('C:/Users/valen/OneDrive/Dokumente/Herrmans-Friedhof/sound-1-167181.mp3');
+
+        function selectCharacter(selectedCharacter) {
+            playClickSound();
+            character = selectedCharacter;
+            document.getElementById('character-selection').style.display = 'none';
+            document.getElementById('game-selection').style.display = 'block';
+        }
+
+        function selectGame(selectedGame) {
+            playClickSound();
+            opponentCharacter = getRandomOpponent(character);
+            if (selectedGame === 'ticTacToe') {
+                document.getElementById('player-character').innerHTML = `<img src="${getCharacterImage(character)}" alt="${character}">`;
+                document.getElementById('opponent-character').innerHTML = `<img src="${getCharacterImage(opponentCharacter)}" alt="Gegner">`;
+                setupTicTacToe();
+                document.getElementById('tic-tac-toe').style.display = 'block';
+            } else if (selectedGame === 'rps') {
+                document.getElementById('rps-player-character').innerHTML = `<img src="${getCharacterImage(character)}" alt="${character}">`;
+                document.getElementById('rps-opponent-character').innerHTML = `<img src="${getCharacterImage(opponentCharacter)}" alt="Gegner">`;
+                resetRPSGame();
+                document.getElementById('rps').style.display = 'block';
+            }
+            document.getElementById('game-selection').style.display = 'none';
+        }
+
+        function getCharacterImage(character) {
+            switch (character) {
+                case 'shrek':
+                    return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCKoYLGInLs7tZ5NgSYjfXW01VgDN6h7vpmw&s';
+                case 'egg':
+                    return 'https://preview.redd.it/egg-sheeran-v0-uyrcl7jsjm7b1.jpg?auto=webp&s=b5599545a4883199c65249bcc02e76cecf18f9d0';
+                case 'uwe':
+                    return 'https://tr.rbxcdn.com/fa235a3695324eb0ddb7e9e27cb69830/420/420/Hat/Webp';
+                default:
+                    return '';
+            }
+        }
+
+        function getRandomOpponent(excludeCharacter) {
+            const characters = ['shrek', 'egg', 'uwe'];
+            const availableCharacters = characters.filter(char => char !== excludeCharacter);
+            return availableCharacters[Math.floor(Math.random() * availableCharacters.length)];
+        }
+
+        function setupTicTacToe() {
+            const cells = document.querySelectorAll('.board div');
+            cells.forEach(cell => {
+                cell.innerHTML = '';
+                cell.addEventListener('click', handleCellClick);
+            });
+            board = Array(9).fill(null);
+            currentPlayer = 'X';
+            document.getElementById('winner').innerText = '';
+        }
+
+        function handleCellClick(event) {
+            playClickSound();
+            const index = event.target.getAttribute('data-index');
+            if (board[index] || checkWinner()) return;
+            makeMove(index, currentPlayer);
+            if (checkWinner()) {
+                endGame();
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                if (currentPlayer === 'O') {
+                    setTimeout(makeAIMove, 500);
+                }
+            }
+        }
+
+        function makeMove(index, player) {
+            board[index] = player;
+            document.querySelector(`.board div[data-index="${index}"]`).innerText = player;
+        }
+
+        function makeAIMove() {
+            const availableMoves = getAvailableMoves();
+            const move = getBestMove('O');
+            makeMove(move, 'O');
+            if (checkWinner()) {
+                endGame();
+            } else {
+                currentPlayer = 'X';
+            }
+        }
+
+        function getAvailableMoves() {
+            return board.map((value, index) => value === null ? index : null).filter(value => value !== null);
+        }
+
+        function getBestMove(player) {
+            const opponent = player === 'X' ? 'O' : 'X';
+            let bestScore = -Infinity;
+            let move = null;
+
+            for (const index of getAvailableMoves()) {
+                board[index] = player;
+                const score = minimax(board, 0, false, player, opponent);
+                board[index] = null;
+                if (score > bestScore) {
+                    bestScore = score;
+                    move = index;
+                }
+            }
+
+            return move;
+        }
+
+        function minimax(board, depth, isMaximizing, player, opponent) {
+            const winner = checkWinner();
+            if (winner === player) return 10 - depth;
+            if (winner === opponent) return depth - 10;
+            if (getAvailableMoves().length === 0) return 0;
+
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (const index of getAvailableMoves()) {
+                    board[index] = player;
+                    const score = minimax(board, depth + 1, false, player, opponent);
+                    board[index] = null;
+                    bestScore = Math.max(score, bestScore);
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (const index of getAvailableMoves()) {
+                    board[index] = opponent;
+                    const score = minimax(board, depth + 1, true, player, opponent);
+                    board[index] = null;
+                    bestScore = Math.min(score, bestScore);
+                }
+                return bestScore;
+            }
+        }
+
+        function checkWinner() {
+            const winningCombinations = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            for (const combination of winningCombinations) {
+                const [a, b, c] = combination;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return board[a];
+                }
+            }
+            return null;
+        }
+
+        function endGame() {
+            const winner = checkWinner();
+            document.getElementById('winner').innerText = winner ? `${winner} gewinnt!` : 'Unentschieden!';
+            playSound(winner === 'X' ? 'goofy-ahh-car-horn-200870.mp3' : 'waterphone-174768.mp3');
+        }
+
+        function resetGame() {
+            setupTicTacToe();
+        }
+
+        function goToGameSelection() {
+            playClickSound();
+            document.getElementById('tic-tac-toe').style.display = 'none';
+            document.getElementById('rps').style.display = 'none';
+            document.getElementById('game-selection').style.display = 'block';
+        }
+
+        function playerChoice(choice) {
+            playClickSound();
+            const opponentChoice = getRandomRPSChoice();
+            displayRPSResult(choice, opponentChoice);
+        }
+
+        function getRandomRPSChoice() {
+            const choices = ['rock', 'paper', 'scissors'];
+            return choices[Math.floor(Math.random() * choices.length)];
+        }
+
+        function displayRPSResult(playerChoice, opponentChoice) {
+            const winner = getRPSWinner(playerChoice, opponentChoice);
+            document.getElementById('rps-winner').innerText = winner === 'draw' ? 'Unentschieden!' : `${winner} gewinnt!`;
+            playSound(winner === 'player' ? 'goofy-ahh-car-horn-200870.mp3' : 'waterphone-174768.mp3');
+        }
+
+        function getRPSWinner(playerChoice, opponentChoice) {
+            if (playerChoice === opponentChoice) return 'draw';
+            if (
+                (playerChoice === 'rock' && opponentChoice === 'scissors') ||
+                (playerChoice === 'scissors' && opponentChoice === 'paper') ||
+                (playerChoice === 'paper' && opponentChoice === 'rock')
+            ) {
+                return 'player';
+            } else {
+                return 'opponent';
+            }
+        }
+
+        function resetRPSGame() {
+            document.getElementById('rps-winner').innerText = '';
+        }
+
+        function playSound(filename) {
+            const audio = new Audio(`C:/Users/valen/OneDrive/Dokumente/Herrmans-Friedhof/${filename}`);
+            audio.play();
+        }
+
+        function playClickSound() {
+            clickSound.play();
+        }
+    </script>
+</body>
+</html>
